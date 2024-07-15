@@ -1,0 +1,21 @@
+*{
+  margin: 0;
+}
+
+
+
+.App{
+  /* background-color: rgb(220, 220, 220); */
+  /* to occupy the entire  100% height of the viewport */
+  min-height: 100vh ;
+  /* no need to mention width as app is classname of div and div is a block level element it occupies the 100% of the width automatically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background-image: url(./images/bg.jpg); */
+  max-width: 100%;
+  overflow-x: hidden;
+}
+p{
+  margin-bottom: 0!important;
+}
