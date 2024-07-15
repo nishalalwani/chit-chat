@@ -24,9 +24,7 @@ const connectDb = async () => {
 }
 connectDb();
 
-app.get("/", (req, res) => {
-    res.send("API is running");
-});
+
 app.use("/user", userRoutes);
 app.use("/chat", chatRoutes);
 app.use("/message", messageRoutes);
