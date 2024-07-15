@@ -42,7 +42,7 @@ const getAllUsers= async()=>{
   }
 
   try{
-    const {data}= await axios.get('http://192.168.29.39:8000/user/getUsers',config)
+    const {data}= await axios.get('/user/getUsers',config)
     setAllUsers(data)
     console.log(data,"gvhj")
   }catch(error){

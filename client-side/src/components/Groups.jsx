@@ -39,7 +39,7 @@ const Groups = () => {
         }
 
         axios
-        .get("http://192.168.29.39:8000/chat/fetchGroups",config)
+        .get("/chat/fetchGroups",config)
         .then((response)=>{
             setGroups(response.data)
         })
@@ -55,7 +55,7 @@ const Groups = () => {
             },
           };
           const { data } = await axios.post(
-            "http://192.168.29.39:8000/chat/access-group",
+            "/chat/access-group",
             { chatId },
             config
           );

@@ -85,7 +85,7 @@ const Login = () => {
                 }
             }
             const response=await axios.post(
-                "http://192.168.29.39:8000/user/login/",
+                "/user/login/",
                 data,
                 config
             )
@@ -123,7 +123,7 @@ const Login = () => {
                 }
             }
             const response= await axios.post(
-                "http://192.168.29.39:8000/user/register",
+                "/user/register",
                 data,
                 config
             );

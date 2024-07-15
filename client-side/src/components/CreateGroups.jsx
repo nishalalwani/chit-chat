@@ -91,7 +91,7 @@ const CreateGroups = () => {
         }
       }
       
-    const {data}= await axios.post("http://192.168.29.39:8000/chat/createGroup",
+    const {data}= await axios.post("/chat/createGroup",
       {
         name:groupName,
         users: JSON.stringify(selectedUsers.map((user)=>user._id)),

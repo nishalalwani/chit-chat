@@ -35,7 +35,7 @@ const Users = () => {
         Authorization: `Bearer ${userData.data.token}`
       }
     }
-    axios.get("http://192.168.29.39:8000/user/fetchUsers", config).then((data) => {
+    axios.get("/user/fetchUsers", config).then((data) => {
       console.log("User data from API", data);
       setUsers(data.data);
     })
@@ -50,7 +50,7 @@ const Users = () => {
         },
       };
       const { data } = await axios.post(
-        "http://192.168.29.39:8000/chat",
+        "/chat",
         { userId },
         config
       );

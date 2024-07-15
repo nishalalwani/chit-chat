@@ -64,7 +64,7 @@ const AddPeopleToGroup = ({from,handleCreate}) => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.get(`http://192.168.29.39:8000/user/fetchUsers?search=${search}`, config);
+      const { data } = await axios.get(`/user/fetchUsers?search=${search}`, config);
       console.log(data);
       setSearchResult(data);
     } catch (error) {
@@ -106,7 +106,7 @@ const AddPeopleToGroup = ({from,handleCreate}) => {
         },
       };
       const { data } = await axios.put(
-        `http://192.168.29.39:8000/chat/addToGroup`,
+        `/chat/addToGroup`,
         {
           chatId: selectedChat._id,
           userId: user1._id,

@@ -84,7 +84,7 @@ const Sidebar = () => {
             Authorization: `Bearer ${user.token}`,
           },
         };
-        const { data } = await axios.get("http://192.168.29.39:8000/chat", config);
+        const { data } = await axios.get("/chat", config);
 
         await setChats(data);
         console.log(data,"hg")
@@ -111,7 +111,7 @@ const Sidebar = () => {
       };
 
       const { data } = await axios.get(
-        `http://192.168.29.39:8000/user/fetchUsers?search=${search}`,
+        `/user/fetchUsers?search=${search}`,
         config
       );
       setSearchResult(data);
@@ -131,7 +131,7 @@ const Sidebar = () => {
         },
       };
       const { data } = await axios.post(
-        "http://192.168.29.39:8000/chat",
+        "/chat",
         { userId },
         config
       );

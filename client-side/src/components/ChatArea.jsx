@@ -44,7 +44,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 
-const ENDPOINT = "http://192.168.29.39:8000/";
+
 
 var socket, selectedChatCompare;
 
@@ -199,7 +199,7 @@ const { socket } = useSocket();
 
     try {
       const { data } = await axios.post(
-        "http://192.168.29.39:8000/message/",
+        "/message/",
         {
           content: messageContent,
           chatId: selectedChat._id,
@@ -255,7 +255,7 @@ const { socket } = useSocket();
         }
       }
 
-      const {data}= await axios.put("http://192.168.29.39:8000/chat/updateImage",
+      const {data}= await axios.put("/chat/updateImage",
         {image:img,
           chatId:selectedChat._id
 
@@ -282,7 +282,7 @@ const { socket } = useSocket();
         },
       };
       const { data } = await axios.put(
-        `http://192.168.29.39:8000/chat/groupExit`,
+        `/chat/groupExit`,
         {
           chatId: selectedChat._id,
           userId: user1._id,
@@ -371,7 +371,7 @@ const { socket } = useSocket();
         },
       };
       const { data } = await axios.get(
-        `http://192.168.29.39:8000/message/${selectedChat._id}`,
+        `/message/${selectedChat._id}`,
         config
       );
       if (data) {
@@ -397,7 +397,7 @@ const { socket } = useSocket();
         },
       };
       const { data } = await axios.put(
-        `http://192.168.29.39:8000/chat/rename`,
+        `/chat/rename`,
         {
           chatId: selectedChat._id,
           chatName: newGroupName,
@@ -442,7 +442,7 @@ const { socket } = useSocket();
           },
         };
         const { data } = await axios.get(
-          "http://192.168.29.39:8000/user/last-seen",
+          "/user/last-seen",
           config
         );
 
