@@ -6,7 +6,7 @@ const SocketContext = React.createContext(null)
 export const useSocket=()=>{
     return React.useContext(SocketContext)
 }
-const ENDPOINT = "https://my-chitchat-app-y6ai.onrender.com"; 
+const ENDPOINT = "https://my-chitchat-app.onrender.com/"; 
 
 export const SocketProvider=(props)=>{
     const socket=useMemo(

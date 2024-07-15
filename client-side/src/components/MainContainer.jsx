@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import io from "socket.io-client";
 import Toaster from './Toaster';
 
-const ENDPOINT = "https://my-chitchat-app-y6ai.onrender.com"; 
+const ENDPOINT = "https://my-chitchat-app.onrender.com/"; 
 
 var socket
 
