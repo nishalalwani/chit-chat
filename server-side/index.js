@@ -58,6 +58,8 @@ const server = app.listen(PORT, console.log(`Server is running on port ${PORT}`)
 const io = require("socket.io")(server, {
     cors: {
         origin: "https://my-chitchat-app-y6ai.onrender.com",
+        methods: ["GET", "POST","PUT"],
+        credentials: true
     },
     pingTimeout: 60000,
 });
