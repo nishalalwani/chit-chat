@@ -2,7 +2,7 @@ import React ,{createContext, useContext, useEffect ,useState} from 'react'
 import io from "socket.io-client";
 
 const ChatContext=createContext();
-const ENDPOINT = "https://chit-chat-y6ai.onrender.com"; 
+const ENDPOINT = "https://my-chit-chat-app1-y6ai.onrender.com"; 
 
 var socket
 
