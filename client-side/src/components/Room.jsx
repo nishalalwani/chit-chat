@@ -107,11 +107,11 @@ const handleSendStream = useCallback(() => {
     try {
       const ans = await createAnswer(offer);
       socket.emit('call-accepted', { userId: from, ans });
-      // handleSendStream();// Automatically send audio stream when the call is accepted
+      handleSendStream();// Automatically send audio stream when the call is accepted
     } catch (error) {
       console.error('Error creating answer', error);
     }
-  }, [createAnswer, socket,]);
+  }, [createAnswer, socket,handleSendStream]);
   
   const handleCallAccepted = useCallback(async ({ ans }) => {
     console.log('Call accepted, setting remote answer', ans);
@@ -133,6 +133,7 @@ const handleSendStream = useCallback(() => {
       await peer.setLocalDescription(localOffer);
       console.log('Negotiation needed, sending offer:', localOffer);
       socket.emit('call-user', { userId: remoteUserId, offer: localOffer });
+      
     } else {
       console.warn('Cannot negotiate in state:', peer.signalingState);
     }
