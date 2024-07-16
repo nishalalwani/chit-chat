@@ -30,8 +30,7 @@ const Room = () => {
   const { peer, createOffer, createAnswer, setRemoteAns, remoteStream } = usePeer();
   const { incomingCall, setIncomingCall, callFrom, setCallFrom,userData ,videoNavigate, setVideoNavigate,selectedChat} = ChatState();
 
- const { setToasterMessage,setSeverityVal
-  } = useContext(myContext);
+
 
 const getAllUsers= async()=>{
   const config={
@@ -108,11 +107,11 @@ const handleSendStream = useCallback(() => {
     try {
       const ans = await createAnswer(offer);
       socket.emit('call-accepted', { userId: from, ans });
-      handleSendStream(); // Automatically send audio stream when the call is accepted
+      // handleSendStream();// Automatically send audio stream when the call is accepted
     } catch (error) {
       console.error('Error creating answer', error);
     }
-  }, [createAnswer, socket, handleSendStream]);
+  }, [createAnswer, socket,]);
   
   const handleCallAccepted = useCallback(async ({ ans }) => {
     console.log('Call accepted, setting remote answer', ans);
