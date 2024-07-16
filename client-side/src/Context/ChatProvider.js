@@ -1,29 +1,29 @@
 import React ,{createContext, useContext, useEffect ,useState} from 'react'
-import io from "socket.io-client";
+import { useSocket } from './Socket';
 
 const ChatContext=createContext();
-const ENDPOINT = "https://my-chitchat-app.onrender.com/"; 
 
-var socket
+
 
 const ChatProvider = ({children}) => {
-    
-    const [selectedChat,setSelectedChat]=useState()
-    const [allMessages, setAllMessages] = useState([]);
-    const [chats,setChats]=useState([])
-    const [onlineUsers, setOnlineUsers]= useState({})
-    const [remoteUserId, setRemoteUserId] = useState(null);
-    const [incomingCall, setIncomingCall] = useState(false); 
-     const [callFrom, setCallFrom] = useState(null); 
-     const [videoNavigate, setVideoNavigate] = React.useState(false);
-
-
-
+  
+  const [selectedChat,setSelectedChat]=useState()
+  const [allMessages, setAllMessages] = useState([]);
+  const [chats,setChats]=useState([])
+  const [onlineUsers, setOnlineUsers]= useState({})
+  const [remoteUserId, setRemoteUserId] = useState(null);
+  const [incomingCall, setIncomingCall] = useState(false); 
+  const [callFrom, setCallFrom] = useState(null); 
+  const [videoNavigate, setVideoNavigate] = React.useState(false);
+  
+  
+  
+  const {socket}= useSocket()
     
    const userData = JSON.parse(localStorage.getItem("userData"));
 
     useEffect(()=>{
-      socket=io(ENDPOINT)
+
       socket.emit('setup',userData)
       socket.on('userOnline', (userId)=>{
         setOnlineUsers((prev)=>({...prev,[userId]:true}))

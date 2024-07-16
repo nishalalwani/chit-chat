@@ -16,6 +16,7 @@ import Room from "./components/Room";
 import { PeerProvider } from "./Context/Peer";
 import AddPeopleToGroup from "./components/AddPeopleToGroup";
 import VideoRoom from "./components/VideoRoom";
+import ChatProvider from "./Context/ChatProvider";
 
 function App() {
   const lightTheme = useSelector((state) => state.themeKey);
@@ -27,6 +28,7 @@ function App() {
       }}
     >
       <SocketProvider>
+      <ChatProvider>
         <PeerProvider>
       <Routes>
         <Route path="/" element={<Login />} />
@@ -41,6 +43,7 @@ function App() {
         </Route>
       </Routes>
       </PeerProvider>
+      </ChatProvider>
       </SocketProvider>
     </div>
   );

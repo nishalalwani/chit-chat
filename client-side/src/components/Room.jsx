@@ -96,11 +96,11 @@ const handleSendStream = useCallback(() => {
     try {
       const offer = await createOffer();
       socket.emit('call-user', { userId, offer });
-      handleSendStream(); // Automatically send audio stream when a new user joins
+      // handleSendStream(); // Automatically send audio stream when a new user joins
     } catch (error) {
       console.error('Error creating offer', error);
     }
-  }, [createOffer, socket, handleSendStream]);
+  }, [createOffer, socket]);
   
   const handleIncomingCall = useCallback(async ({ from, offer }) => {
     console.log('Incoming call from', from);
@@ -119,14 +119,14 @@ const handleSendStream = useCallback(() => {
     if (peer.signalingState === 'have-local-offer') {
       try {
         await setRemoteAns(ans);
-        handleSendStream(); // Automatically send audio stream when the call is accepted
+        // handleSendStream(); // Automatically send audio stream when the call is accepted
       } catch (error) {
         console.error('Error setting remote answer', error);
       }
     } else {
       console.warn('Cannot set remote answer in state:', peer.signalingState);
     }
-  }, [setRemoteAns, peer, handleSendStream]);
+  }, [setRemoteAns, peer]);
   
   const handleNegotiation = useCallback(async () => {
     if (peer.signalingState === 'stable') {
@@ -279,7 +279,7 @@ useEffect(() => {
               <h2 className="caller-name my-2">{userName}</h2>
             </>
           )}
-          {videoNavigate &&show ? (
+          {videoNavigate &&!show ? (
             <>
 
               <div className="video-container">
@@ -290,7 +290,7 @@ useEffect(() => {
           ) : (
             <audio ref={remoteAudioRef} autoPlay controls={false} onTimeUpdate={handleTimeUpdate} style={{ display: 'none' }} />
           )}
-           {videoNavigate &&!show ? (
+           {videoNavigate &&show ? (
             <>
 
               <div className="video-container">

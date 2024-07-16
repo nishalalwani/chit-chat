@@ -3,15 +3,16 @@ import '../assets/style/myStyles.css'
 import Sidebar from './Sidebar';
 import { Outlet } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { useSocket } from '../Context/Socket';
 
 
 import { useDispatch, useSelector } from 'react-redux';
-import io from "socket.io-client";
+
 import Toaster from './Toaster';
 
-const ENDPOINT = "https://my-chitchat-app.onrender.com/"; 
 
-var socket
+
+
 
 export const myContext = createContext();
 export const MainContainerContext=()=>{
@@ -21,7 +22,7 @@ export const MainContainerContext=()=>{
 const MainContainer = () => {
   const navigate=useNavigate()
 
-   
+  const { socket } = useSocket();
   const userData = JSON.parse(localStorage.getItem("userData"));
   if(!userData){
     console.log("User is not Authenticated")
@@ -47,7 +48,6 @@ const MainContainer = () => {
   
 
   useEffect(()=>{
-    socket=io(ENDPOINT)
     socket.emit('setup',userData)
     socket.on('userOnline', (userId)=>{
       setOnlineUsers((prev)=>({...prev,[userId]:true}))
