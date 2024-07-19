@@ -144,6 +144,13 @@ io.on("connection", (socket) => {
         }
     });
 
+    socket.on('accept_call', (data) => {
+        const { callFrom } = data;
+        // Emit back to the caller only
+        console.log(callFrom,"calllllll")
+        io.to(callFrom).emit('call_accepted');
+    });
+
     socket.on('call-declined', (data) => {
         const { userId } = data;
         const socketId = userIdToSocketMapping.get(userId);

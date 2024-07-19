@@ -18,7 +18,7 @@ const Room = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [show, setShow] = useState(true);
   const [allUsers, setAllUsers] = useState();
-  const [streamUser, setStreamUser] = useState(false);
+
 
   const localAudioRef = useRef(null);
   const remoteAudioRef = useRef(null);
@@ -108,7 +108,7 @@ const handleSendStream = useCallback(() => {
     try {
       const ans = await createAnswer(offer);
       socket.emit('call-accepted', { userId: from, ans });
-      handleSendStream();// Automatically send audio stream when the call is accepted
+      // handleSendStream();// Automatically send audio stream when the call is accepted
     } catch (error) {
       console.error('Error creating answer', error);
     }
@@ -179,7 +179,12 @@ useEffect(() => {
 }, [remoteStream, videoNavigate]);
 
 
-  
+  useEffect(()=>{
+    socket.on('call_accepted', () => {
+      console.log('cfgghvjkuygtbv vbhcgtdtjshj,a')
+      handleSendStream();
+  });
+  },[handleSendStream])
 
   
   const handleTimeUpdate = useCallback(() => {
@@ -199,19 +204,20 @@ useEffect(() => {
       setIsMuted(!isMuted);
     }
   };
+
   
   const handleAcceptCall = useCallback(async () => {
     if (callFrom) {
       try {
-        const ans = await createAnswer();
-        socket.emit('call-accepted', { userId: callFrom, ans });
-        setIncomingCall(false);
+        
         handleSendStream(); // Automatically send audio stream when the call is accepted
+        console.log(callFrom,"callerrrrr")
+        socket.emit('accept_call', { callFrom });
       } catch (error) {
         console.error('Error accepting call', error);
       }
     }
-  }, [callFrom, createAnswer, socket, handleSendStream]);
+  }, [callFrom, socket, handleSendStream]);
   
   const handleDeclineCall = useCallback(() => {
     console.log("hj");
@@ -253,10 +259,6 @@ useEffect(() => {
   const userName= user?.name
   const userImage= user?.image
 
-  if(streamUser){
-    handleSendStream();
-    setStreamUser(false)
-  }
 
   return (
     <>
@@ -308,7 +310,7 @@ useEffect(() => {
           )}
         </div>
         <div className="actions mt-4">
-          {!show || (incomingCall && <button className="answer-button mx-2 bg-success text-white" onClick={()=>{handleSendStream();setStreamUser(true)}}>Answer</button>)}
+          {!show || (incomingCall && <button className="answer-button mx-2 bg-success text-white" onClick={handleAcceptCall}>Answer</button>)}
           <button className="decline-button mx-2 bg-danger text-white" onClick={handleDeclineCall}>Decline</button>
         </div>
         <div className="call-controls mt-4">
