@@ -57,8 +57,8 @@ const server = app.listen(PORT, console.log(`Server is running on port ${PORT}`)
 
 const io = require("socket.io")(server, {
     cors: {
-        origin: "https://my-chitchat-app.onrender.com/",
-        // origin:"*",
+        // origin: "https://my-chitchat-app.onrender.com/",
+        origin:"*",
         methods: ["GET", "POST","PUT"],
         credentials: true
     },
@@ -74,7 +74,7 @@ io.on("connection", (socket) => {
     console.log(`User ${socket.id} connected`);
 
     socket.on("setup", async (userData) => {
-        const userId = userData?.data._id;
+        const userId = userData?.data?._id;
         if (userId) {
             socket.join(userId);
             await User.findByIdAndUpdate(userId, { lastSeen: Date.now() });

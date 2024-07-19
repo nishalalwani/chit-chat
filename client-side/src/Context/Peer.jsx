@@ -42,10 +42,6 @@ export const PeerProvider = (props) => {
 
   const setRemoteAns = useCallback(async (ans) => {
     try {
-      if (peer.signalingState !== 'have-local-offer') {
-        console.error('Peer connection is not in a valid state to set remote answer.');
-        return;
-      }
       await peer.setRemoteDescription(new RTCSessionDescription(ans));
     } catch (error) {
       console.error('Error setting remote answer:', error);

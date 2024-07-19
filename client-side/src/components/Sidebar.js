@@ -20,6 +20,7 @@ import styled from "@emotion/styled";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import profile from "../assets/images/p.jpg";
+import ImageIcon from "@mui/icons-material/Image";
 
 
 
@@ -41,11 +42,16 @@ const Sidebar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
+  const [img, setImg] = useState('');
   
 
-
+  const fileInputRef= useRef(null)
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const handleIconClick=()=>{
+    fileInputRef.current.click()
+  }
 
   const style = {
     position: "absolute",
@@ -119,7 +125,33 @@ const Sidebar = () => {
     } catch (error) {
       console.error("Error fetching conversations:", error);
     }
+  }
+
+  const handleFileChange = (pic) => {
+    if(pic===undefined){
+      console.log("Please select an image")
+      return;
+  }
+  if(pic.type==="image/jpeg" || pic.type==="image/png"){
+    const data= new FormData()
+    data.append("file",pic)
+    data.append("upload_preset", "chat-app")
+    data.append("cloud_name","dpuc22zhd")
+    fetch("https://api.cloudinary.com/v1_1/dpuc22zhd/image/upload",{
+      method:"post",
+      body:data
+    })
+    .then((res)=>res.json())
+    .then((data)=>{
+      setImg(data.url.toString())
+    }).catch((err)=>{
+      console.log(err)
+    })
+
+    // handleUpdateGroupImage()
+  }
   };
+
 
   const accessChat = async (userId) => {
 
@@ -207,6 +239,19 @@ const Sidebar = () => {
       >
         <Box sx={style}>
           <div class="user-info">
+          <div className="d-flex justify-content-center position-relative">
+      <img src={userData.data.iamge} alt="User Image" className="img-fluid" />
+ 
+        <ImageIcon
+          onClick={handleIconClick}
+          className="position-absolute image-edit-group"
+          style={{ bottom: '1.5rem', left: '15rem', cursor: 'pointer' }}
+        />
+        <input type="file" ref={fileInputRef}  style={{ display: 'none' }}
+            onChange={(e)=>handleFileChange(e.target.files[0])}/>
+  
+
+    </div>
             <img src={userData.data.image} alt="User Image" />
             <h2>{userData.data.name}</h2>
             <p>
