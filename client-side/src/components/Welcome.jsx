@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 
 const Welcome = () => {
   const userData=JSON.parse(localStorage.getItem("userData"))
-  console.log(userData)
+  // console.log(userData)
   const navigate=useNavigate();
 
   if(!userData){

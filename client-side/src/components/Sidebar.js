@@ -93,7 +93,7 @@ const Sidebar = () => {
         const { data } = await axios.get("/chat", config);
 
         await setChats(data);
-        console.log(data,"hg")
+
 
       } catch (error) {
         console.error("Error fetching conversations:", error);

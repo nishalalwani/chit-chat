@@ -118,6 +118,7 @@ io.on("connection", (socket) => {
         console.log(`User ${callerId} is calling ${calleeId}`);
         io.to(calleeId).emit("incoming-call-notification", { roomId, callerId });
       });
+  
     socket.on("join-room", (data) => {
         const { roomId, userId } = data;
         console.log(`User ${socket.id} joined room ${roomId}`);
@@ -126,8 +127,16 @@ io.on("connection", (socket) => {
         socket.join(roomId);
         socket.emit('joined-room', { roomId });
         socket.broadcast.to(roomId).emit("user-joined", { userId });
+
+       
     });
 
+    socket.on("start-video-call", ({ roomId }) => {
+        console.log(`Starting video call in room ${roomId}`);
+        io.to(roomId).emit("video-call-started");
+        console.log(`Video call started in room ${roomId}`);
+      });
+   
     socket.on('call-user', (data) => {
         const fromUserId = socketToUserIdMapping.get(socket.id);
         const { userId, offer } = data;

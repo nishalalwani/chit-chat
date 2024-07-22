@@ -44,7 +44,6 @@ const getAllUsers= async()=>{
   try{
     const {data}= await axios.get('/user/getUsers',config)
     setAllUsers(data)
-    console.log(data,"gvhj")
   }catch(error){
     console.log(error)
   }
@@ -91,7 +90,7 @@ const handleSendStream = useCallback(() => {
   
   const handleNewUserJoined = useCallback(async (data) => {
     const { userId } = data;
-    console.log('New user joined', userId);
+    // console.log('New user joined', userId);
     setRemoteUserId(userId);
     try {
       const offer = await createOffer();
@@ -103,7 +102,7 @@ const handleSendStream = useCallback(() => {
   }, [createOffer, socket]);
   
   const handleIncomingCall = useCallback(async ({ from, offer }) => {
-    console.log('Incoming call from', from);
+    // console.log('Incoming call from', from);
     setRemoteUserId(from);
     try {
       const ans = await createAnswer(offer);
@@ -115,7 +114,7 @@ const handleSendStream = useCallback(() => {
   }, [createAnswer, socket,handleSendStream]);
   
   const handleCallAccepted = useCallback(async ({ ans }) => {
-    console.log('Call accepted, setting remote answer', ans);
+    // console.log('Call accepted, setting remote answer', ans);
     if (peer.signalingState === 'have-local-offer') {
       try {
         await setRemoteAns(ans);
@@ -132,7 +131,7 @@ const handleSendStream = useCallback(() => {
     if (peer.signalingState === 'stable') {
       const localOffer = await peer.createOffer();
       await peer.setLocalDescription(localOffer);
-      console.log('Negotiation needed, sending offer:', localOffer);
+      // console.log('Negotiation needed, sending offer:', localOffer);
       socket.emit('call-user', { userId: remoteUserId, offer: localOffer });
       
     } else {
@@ -141,10 +140,10 @@ const handleSendStream = useCallback(() => {
   }, [peer, remoteUserId, socket]);
   
   useEffect(() => {
-    console.log('Setting up peer negotiation listener');
+    // console.log('Setting up peer negotiation listener');
     peer.addEventListener('negotiationneeded', handleNegotiation);
     return () => {
-      console.log('Cleaning up peer negotiation listener');
+      // console.log('Cleaning up peer negotiation listener');
       peer.removeEventListener('negotiationneeded', handleNegotiation);
     };
   }, [handleNegotiation]);
@@ -179,12 +178,22 @@ useEffect(() => {
 }, [remoteStream, videoNavigate]);
 
 
-  useEffect(()=>{
-    socket.on('call_accepted', () => {
-      console.log('cfgghvjkuygtbv vbhcgtdtjshj,a')
+useEffect(() => {
+  // Define the handler function
+  const handleCallAccepted =  () => {
+    setTimeout(()=>{
       handleSendStream();
-  });
-  },[handleSendStream])
+    },1000)
+  };
+
+  // Set up the event listener
+  socket.on('call_accepted', handleCallAccepted);
+
+  // Clean up the event listener on component unmount or when dependencies change
+  return () => {
+    socket.off('call_accepted', handleCallAccepted);
+  };
+}, [socket, handleSendStream]);
 
   
   const handleTimeUpdate = useCallback(() => {
@@ -210,8 +219,7 @@ useEffect(() => {
     if (callFrom) {
       try {
         
-        handleSendStream(); // Automatically send audio stream when the call is accepted
-        console.log(callFrom,"callerrrrr")
+        handleSendStream(); 
         socket.emit('accept_call', { callFrom });
       } catch (error) {
         console.error('Error accepting call', error);
@@ -220,7 +228,7 @@ useEffect(() => {
   }, [callFrom, socket, handleSendStream]);
   
   const handleDeclineCall = useCallback(() => {
-    console.log("hj");
+
     if (callFrom) {
       socket.emit('call-declined', { userId: callFrom });
       setIncomingCall(false);
@@ -239,7 +247,7 @@ useEffect(() => {
   
   useEffect(() => {
     socket.on('call-declined', (data) => {
-      console.log('Call declined', data);
+
       setIncomingCall(false);
       setRemoteUserId(null);
       navigate("/app/chat"); 
@@ -252,7 +260,7 @@ useEffect(() => {
       peer.close();
     });
   }, [socket, myStream, peer]);
-  console.log(remoteUserId,"remote")
+ 
   
   const user = allUsers?.find((u) => u._id === remoteUserId) ||
   selectedChat?.users.find((u) => u._id !== userData.data._id);
@@ -262,16 +270,7 @@ useEffect(() => {
 
   return (
     <>
-{/* {!userName|| !userImage?(
-  <>
- { setToasterMessage("Another user is not Logged in") }
- {setSeverityVal("error")}
- {navigate('/app/chat')}
-
-  </>
-  
-
-): */}
+<button onClick={handleSendStream}>send</button>
 
       <div className="incoming-call-screen d-flex flex-column align-items-center justify-content-center">
         <div className="caller-info text-center">

@@ -18,12 +18,12 @@ const Room = () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       setMyStream(stream);
-      // if (localVideoRef.current) {
-      //   localVideoRef.current.srcObject = stream;
-      // }
-      if (localAudioRef.current) {
-        localAudioRef.current.srcObject = stream;
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
       }
+      // if (localAudioRef.current) {
+      //   localAudioRef.current.srcObject = stream;
+      // }
     } catch (error) {
       console.error('Error accessing media devices.', error);
     }
@@ -114,12 +114,12 @@ const Room = () => {
   }, [getUserMediaStream]);
 
   useEffect(() => {
-    // if (remoteStream && remoteVideoRef.current) {
-    //   remoteVideoRef.current.srcObject = remoteStream;
-    // }
-    if (remoteStream && remoteAudioRef.current) {
-      remoteAudioRef.current.srcObject = remoteStream;
+    if (remoteStream && remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = remoteStream;
     }
+    // if (remoteStream && remoteAudioRef.current) {
+    //   remoteAudioRef.current.srcObject = remoteStream;
+    // }
   }, [remoteStream]);
 
   return (
@@ -127,10 +127,10 @@ const Room = () => {
       <div>Room</div>
       <h2>You are connected to {remoteUserId}</h2>
       <button onClick={handleSendStream}>Send My Video</button>
-      {/* <video ref={localVideoRef} autoPlay playsInline muted style={{ width: '12rem' }} />
-      <video ref={remoteVideoRef} autoPlay playsInline /> */}
-      <audio ref={localAudioRef} autoPlay controls muted />
-      <audio ref={remoteAudioRef} autoPlay controls />
+      <video ref={localVideoRef} autoPlay playsInline muted style={{ width: '12rem' }} />
+      <video ref={remoteVideoRef} autoPlay playsInline />
+      {/* <audio ref={localAudioRef} autoPlay controls muted />
+      <audio ref={remoteAudioRef} autoPlay controls /> */}
     </div>
   );
 };
