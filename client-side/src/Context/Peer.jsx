@@ -69,7 +69,7 @@ export const PeerProvider = (props) => {
   }, [peer, handleTrackEvent]);
 
   return (
-    <PeerContext.Provider value={{ peer, createOffer, createAnswer, setRemoteAns, sendStream, remoteStream }}>
+    <PeerContext.Provider value={{ peer, createOffer, createAnswer, setRemoteAns, sendStream, remoteStream,setRemoteStream }}>
       {props.children}
     </PeerContext.Provider>
   );

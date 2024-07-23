@@ -56,6 +56,7 @@ useEffect(()=>{
 
 
 const getUserMediaStream = useCallback(async () => {
+
   try {
     let stream;
     if (videoNavigate) {
@@ -63,7 +64,7 @@ const getUserMediaStream = useCallback(async () => {
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
-    } else {
+    } else { 
       stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       if (localAudioRef.current) {
         localAudioRef.current.srcObject = stream;
@@ -85,6 +86,13 @@ const handleSendStream = useCallback(() => {
           addedTracks.current.add(track);
         }
       });
+
+      // if (videoNavigate && localVideoRef.current) {
+      //   localVideoRef.current.srcObject = myStream;
+      // }
+      //  if (videoNavigate && remoteVideoRef.current) {
+      //   remoteVideoRef.current.srcObject = myStream;
+      // }
     }
   }, [myStream, peer]);
   
@@ -95,11 +103,11 @@ const handleSendStream = useCallback(() => {
     try {
       const offer = await createOffer();
       socket.emit('call-user', { userId, offer });
-      // handleSendStream(); // Automatically send audio stream when a new user joins
+      handleSendStream(); // Automatically send audio stream when a new user joins
     } catch (error) {
       console.error('Error creating offer', error);
     }
-  }, [createOffer, socket]);
+  }, [createOffer, socket,handleSendStream]);
   
   const handleIncomingCall = useCallback(async ({ from, offer }) => {
     // console.log('Incoming call from', from);
@@ -164,6 +172,7 @@ const handleSendStream = useCallback(() => {
     getUserMediaStream();
   }, [getUserMediaStream]);
   
+console.log(videoNavigate,"videoNavigate")
 
 useEffect(() => {
   if (videoNavigate) {
@@ -181,6 +190,7 @@ useEffect(() => {
 useEffect(() => {
   // Define the handler function
   const handleCallAccepted =  () => {
+    console.log("heyy")
     setTimeout(()=>{
       handleSendStream();
     },1000)
@@ -197,8 +207,8 @@ useEffect(() => {
 
   
   const handleTimeUpdate = useCallback(() => {
-    if (remoteAudioRef.current) {
-      const duration = Math.floor(remoteAudioRef.current.currentTime);
+    if (remoteAudioRef?.current||remoteVideoRef?.current) {
+      const duration =  Math.floor(remoteAudioRef?.current?.currentTime||remoteVideoRef?.current?.currentTime);
       const minutes = Math.floor(duration / 60).toString().padStart(2, '0');
       const seconds = (duration % 60).toString().padStart(2, '0');
       setCallDuration(`${minutes}:${seconds}`);
@@ -291,11 +301,13 @@ useEffect(() => {
 
               <div className="video-container">
                 <video ref={localVideoRef} autoPlay playsInline muted className="local-video" />
-                <video ref={remoteVideoRef} autoPlay playsInline className="remote-video" />
+                <video ref={remoteVideoRef} autoPlay onTimeUpdate={handleTimeUpdate}  playsInline className="remote-video" />
               </div>
             </>
           ) : (
+            <>
             <audio ref={remoteAudioRef} autoPlay controls={false} onTimeUpdate={handleTimeUpdate} style={{ display: 'none' }} />
+            </>
           )}
            {videoNavigate &&show ? (
             <>

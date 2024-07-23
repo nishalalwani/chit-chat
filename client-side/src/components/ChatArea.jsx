@@ -361,7 +361,7 @@ const { socket } = useSocket();
       // Only callee joins the room on incoming call notification
       if (userData.data._id !== callerId) {
         socket.emit("join-room", { roomId, userId: userData.data._id });
-  
+        setVideoNavigate(true)
          navigate(`/app/room/${roomId}`)
         setIncomingCall(true);
         setCallFrom(callerId);
