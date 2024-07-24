@@ -103,11 +103,10 @@ const handleSendStream = useCallback(() => {
     try {
       const offer = await createOffer();
       socket.emit('call-user', { userId, offer });
-      handleSendStream(); // Automatically send audio stream when a new user joins
     } catch (error) {
       console.error('Error creating offer', error);
     }
-  }, [createOffer, socket,handleSendStream]);
+  }, [createOffer, socket]);
   
   const handleIncomingCall = useCallback(async ({ from, offer }) => {
     // console.log('Incoming call from', from);
@@ -115,11 +114,10 @@ const handleSendStream = useCallback(() => {
     try {
       const ans = await createAnswer(offer);
       socket.emit('call-accepted', { userId: from, ans });
-      // handleSendStream();// Automatically send audio stream when the call is accepted
     } catch (error) {
       console.error('Error creating answer', error);
     }
-  }, [createAnswer, socket,handleSendStream]);
+  }, [createAnswer, socket]);
   
   const handleCallAccepted = useCallback(async ({ ans }) => {
     // console.log('Call accepted, setting remote answer', ans);
@@ -172,7 +170,7 @@ const handleSendStream = useCallback(() => {
     getUserMediaStream();
   }, [getUserMediaStream]);
   
-console.log(videoNavigate,"videoNavigate")
+
 
 useEffect(() => {
   if (videoNavigate) {
