@@ -114,9 +114,9 @@ io.on("connection", (socket) => {
             }
         });
     });
-    socket.on("call-user-notification", ({ roomId, callerId, calleeId }) => {
+    socket.on("call-user-notification", ({ roomId, callerId, calleeId,videoNavigate }) => {
         console.log(`User ${callerId} is calling ${calleeId}`);
-        io.to(calleeId).emit("incoming-call-notification", { roomId, callerId });
+        io.to(calleeId).emit("incoming-call-notification", { roomId, callerId,videoNavigate });
       });
   
     socket.on("join-room", (data) => {
@@ -125,17 +125,18 @@ io.on("connection", (socket) => {
         userIdToSocketMapping.set(userId, socket.id);
         socketToUserIdMapping.set(socket.id, userId);
         socket.join(roomId);
-        socket.emit('joined-room', { roomId });
-        socket.broadcast.to(roomId).emit("user-joined", { userId });
+        io.to(roomId).emit('joined-room', { roomId });
+        socket.broadcast.to(roomId).emit("user-joined", { userId ,roomId});
+
 
        
     });
 
-    socket.on("start-video-call", ({ roomId }) => {
-        console.log(`Starting video call in room ${roomId}`);
-        io.to(roomId).emit("video-call-started");
-        console.log(`Video call started in room ${roomId}`);
-      });
+    // socket.on("start-video-call", ({ roomId }) => {
+    //     console.log(`Starting video call in room ${roomId}`);
+    //     io.to(roomId).emit("video-call-started");
+    //     console.log(`Video call started in room ${roomId}`);
+    //   });
    
     socket.on('call-user', (data) => {
         const fromUserId = socketToUserIdMapping.get(socket.id);
@@ -161,10 +162,10 @@ io.on("connection", (socket) => {
     });
 
     socket.on('call-declined', (data) => {
-        const { userId } = data;
-        const socketId = userIdToSocketMapping.get(userId);
-        if (socketId) {
-          io.to(socketId).emit('call-declined', { userId: socketToUserIdMapping.get(socket.id) });
+        const { roomId} = data;
+        console.log(roomId,"rooooommmm")
+        if (roomId) {
+          io.to(roomId).emit('call-declined');
         }
       });
 
@@ -175,7 +176,6 @@ io.on("connection", (socket) => {
             delete socketUserMap[socket.id];
             await User.findByIdAndUpdate(userId, { lastSeen: Date.now() });
             io.emit('userOffline', userId);
-            console.log(`User ${socket.id} disconnected`);
             io.emit('disconnectedTime', new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
         }
     });

@@ -74,11 +74,14 @@ const MainContainer = () => {
     setSeverityVal("");
   };
 
+
   useEffect(() => {
     if (toasterMessage) {
       setSnackbarOpen(true);
     }
   }, [toasterMessage]);
+
+
  
 
 

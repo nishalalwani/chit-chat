@@ -174,9 +174,9 @@ const Login = () => {
             <input className ='login_input' type={show?"text":"password"}name="password" placeholder="Password" required="" onChange={changeHandler} />
             <span className='password_toggle'onClick={handleClick}>{show?<VisibilityIcon/>:<VisibilityOffIcon/>}</span>
             </div>
-            <div class="file-input-container">
+            <div className="file-input-container">
         <span className='labelInput'onClick={handleFileInputClick} >Choose File</span>
-        <input class="login_input" type="file"  ref={fileInputRef} onChange={(e)=>postImage(e.target.files[0])} />
+        <input className="login_input" type="file"  ref={fileInputRef} onChange={(e)=>postImage(e.target.files[0])} />
     </div>
             <button className='button_login' onClick={signUpHandler}>Sign up</button>  
         </form>

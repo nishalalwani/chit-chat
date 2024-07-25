@@ -16,6 +16,8 @@ const ChatProvider = ({children}) => {
   const [callFrom, setCallFrom] = useState(null); 
   const [videoNavigate, setVideoNavigate] = React.useState(false);
   const [videoIconClicked, setVideoIconClicked] = React.useState(false);
+  const [myRoomId,setMyRoomId]=useState()
+
   
   
   
@@ -46,7 +48,7 @@ const ChatProvider = ({children}) => {
     },[])
 
   return (
-    <ChatContext.Provider value={{videoIconClicked, setVideoIconClicked,videoNavigate, setVideoNavigate,remoteUserId, setRemoteUserId,incomingCall, setIncomingCall,callFrom, setCallFrom,selectedChat,setSelectedChat,chats,setChats,allMessages,setAllMessages,userData,onlineUsers}}>
+    <ChatContext.Provider value={{myRoomId,setMyRoomId,videoIconClicked, setVideoIconClicked,videoNavigate, setVideoNavigate,remoteUserId, setRemoteUserId,incomingCall, setIncomingCall,callFrom, setCallFrom,selectedChat,setSelectedChat,chats,setChats,allMessages,setAllMessages,userData,onlineUsers}}>
         {children}
     </ChatContext.Provider>
   )

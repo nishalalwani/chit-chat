@@ -42,7 +42,7 @@ const Sidebar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
-  const [img, setImg] = useState('');
+  const [img, setImg] = useState();
   
 
   const fileInputRef= useRef(null)
@@ -143,12 +143,12 @@ const Sidebar = () => {
     })
     .then((res)=>res.json())
     .then((data)=>{
-      setImg(data.url.toString())
+      updateImage(data.url.toString());
+      console.log("image upload successful")
     }).catch((err)=>{
       console.log(err)
     })
 
-    // handleUpdateGroupImage()
   }
   };
 
@@ -176,6 +176,37 @@ const Sidebar = () => {
     } catch (error) {
       setToasterMessage("error")
       setSeverityVal("Error occurred while accessing chat!")
+      console.log(error);
+    }
+  };
+
+  const updateImage = async (imageUrl) => {
+
+    try {
+      console.log(img,"api img")
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+      const { data } = await axios.put(
+        "/user/updateImage",
+        { userId:user._id,imageUrl},
+        config
+      );
+      let updatedUserData = JSON.parse(localStorage.getItem("userData"));
+      updatedUserData.data.image = imageUrl;
+      localStorage.setItem("userData", JSON.stringify(updatedUserData));
+    
+
+      setToasterMessage("User Profile updated successfully.!")
+      setSeverityVal("success")
+
+
+    } catch (error) {
+      setToasterMessage("Error occurred while updating image!")
+      setSeverityVal("error")
       console.log(error);
     }
   };
@@ -240,20 +271,20 @@ const Sidebar = () => {
         <Box sx={style}>
           <div class="user-info">
           <div className="d-flex justify-content-center position-relative">
-      <img src={userData.data.iamge} alt="User Image" className="img-fluid" />
+ 
  
         <ImageIcon
           onClick={handleIconClick}
           className="position-absolute image-edit-group"
-          style={{ bottom: '1.5rem', left: '15rem', cursor: 'pointer' }}
+          style={{ bottom: '-9.5rem', left: '15rem', cursor: 'pointer' }}
         />
         <input type="file" ref={fileInputRef}  style={{ display: 'none' }}
             onChange={(e)=>handleFileChange(e.target.files[0])}/>
   
 
     </div>
-            <img src={userData.data.image} alt="User Image" />
-            <h2>{userData.data.name}</h2>
+            <img src={userData?.data.image} alt="User Image" />
+            <h2>{userData?.data.name}</h2>
             <p>
               {
                userData.data.email
@@ -332,7 +363,7 @@ const Sidebar = () => {
           {searchResult.map((user, index) => (
             <MenuItem key={index} onClick={handleMenuClose}>
               <ListItemText
-                primary={user.name}
+                primary={user?.name}
                 onClick={() => {
                   accessChat(user._id);
                   navigate("/app/chat")
@@ -349,12 +380,12 @@ const Sidebar = () => {
           } else {
             chat?.users.map((user) => {
               if (user._id !== userData.data._id) {
-                chatName = user.name;
+                chatName = user?.name;
               }
             });
           }
 
-          var chatImage= chat?.isGroupChat?chat.groupImage:chat?.users?.filter((u)=>u._id!==userData.data._id)[0].image
+          var chatImage= chat?.isGroupChat?chat.groupImage:chat?.users?.filter((u)=>u._id!==userData.data._id)[0]?.image
 
           // Check if there are no previous messages in the chat
           if (chat.latestMessage === undefined || chat.latestMessage === null) {
@@ -401,7 +432,7 @@ const Sidebar = () => {
                 <img className="con_icon" src={chatImage}/>
                 <p className="con_title"style={{color:lightTheme?"black":"white"}}>{chatName}</p>
                 <p className= "con_lastMessage" style={{color:lightTheme?"black":"white"}}>
-                  {chat.latestMessage.sender.name}: {chat.latestMessage.content}
+                  {chat.latestMessage?.sender?.name}: {chat.latestMessage.content}
                 </p>
               </div>
             );

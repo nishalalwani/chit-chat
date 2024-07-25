@@ -126,7 +126,7 @@ const ChatArea = ({ fetchAgain, setFetchAgain }) => {
     setSelectedChat,
     allMessages,
     setAllMessages,
-    remoteUserId, setRemoteUserId,
+    myRoomId,setMyRoomId,
     incomingCall, setIncomingCall,
     callFrom, setCallFrom,
     videoNavigate, setVideoNavigate,
@@ -136,7 +136,7 @@ const ChatArea = ({ fetchAgain, setFetchAgain }) => {
 
 const { socket } = useSocket();
  
-
+const videoIconClickedRef = useRef(videoIconClicked);
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -333,12 +333,13 @@ const { socket } = useSocket();
   // useEffect(()=>{
   //   handleJoinRoom()
   // },[])
+ 
   
   const handleCall = (userToCall,videoCall = false) => {
     const roomId = selectedChat?._id;
-    socket.emit("call-user-notification", { roomId, callerId: userData.data._id, calleeId: userToCall });
+    socket.emit("call-user-notification", { roomId, callerId: userData.data._id, calleeId: userToCall,videoNavigate:videoCall });
     // Caller joins the room
-    socket.emit("join-room", { roomId, userId: userData.data._id });
+    socket.emit("join-room", { roomId, userId: userData.data._id,videoNavigate:videoCall });
 
     if (videoCall) {
       socket.emit("start-video-call", { roomId });
@@ -350,27 +351,31 @@ const { socket } = useSocket();
 
   const handleVideoCall = (userToNotify) => {
     const roomId = selectedChat?._id;
-    console.log(`Starting video call in room ${roomId}`);
     handleCall(userToNotify, true); // Pass true to indicate it's a video call
 };
 
+useEffect(() => {
+  videoIconClickedRef.current = videoIconClicked;
+}, [videoIconClicked]);
 
+useEffect(() => {
   
-  useEffect(() => {
-    socket.on("incoming-call-notification", ({ roomId, callerId }) => {
-      // Only callee joins the room on incoming call notification
-      if (userData.data._id !== callerId) {
-        socket.emit("join-room", { roomId, userId: userData.data._id });
-        setVideoNavigate(true)
-         navigate(`/app/room/${roomId}`)
-        setIncomingCall(true);
+  console.log(videoIconClickedRef.current, "videoIconClicked in useEffect");
+  socket.on("incoming-call-notification", ({ roomId, callerId,videoNavigate }) => {
+    // Only callee joins the room on incoming call notification
+    if (userData.data._id !== callerId) {
+      socket.emit("join-room", { roomId, userId: userData.data._id,videoNavigate:videoIconClickedRef.current  });
+      navigate(`/app/room/${roomId}`)
+      setIncomingCall(true);
+      setVideoNavigate(videoNavigate)
+      setMyRoomId(roomId)
         setCallFrom(callerId);
       }
     });
    return () => {
     socket.off("incoming-call-notification");
   };
-}, [socket, navigate, userData.data._id,videoIconClicked]);
+}, [socket, navigate, userData.data._id,videoIconClickedRef.current ]);
 
 useEffect(() => {
   socket.on("video-call-started", () => {
@@ -590,7 +595,12 @@ useEffect(() => {
               <IconButton  className={(lightTheme ? "" : " dark")} onClick={()=>handleCall(chatId)} >
                 <LocalPhoneIcon/>
               </IconButton>
-              <IconButton className={(lightTheme ? "" : " dark")} onClick={()=>{setVideoIconClicked(true);handleVideoCall(chatId);}}>
+              <IconButton className={(lightTheme ? "" : " dark")} onClick={() => {
+   
+   videoIconClickedRef.current = true;
+   console.log(videoIconClickedRef.current, "videoIconClicked in onClick");
+    handleVideoCall(chatId,true);
+}}>
                 <VideocamIcon />
               </IconButton>
               <IconButton

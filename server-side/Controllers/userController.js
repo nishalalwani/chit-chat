@@ -104,4 +104,29 @@ const getLastSeenController = expressAsyncHandler(async (req, res) => {
     res.status(200).json(lastSeenData);
 });
 
-module.exports= {loginController,registerController,fetchAllUsersController,getLastSeenController,getAllUsers}
+const updateUserImageController = expressAsyncHandler(async (req, res) => {
+    const { userId, imageUrl } = req.body;
+    console.log(userId,"id",imageUrl,"image")
+
+    if (!userId || !imageUrl) {
+        res.status(400);
+        throw new Error("User ID and image URL are required");
+    }
+
+    // Find the user by ID
+    const updatedUser = await User.findByIdAndUpdate(userId, { image: imageUrl }, { new: true });
+
+    if (!updatedUser) {
+        res.status(404);
+        throw new Error("User not found");
+    }
+
+ 
+
+    res.json({
+      updatedUser
+
+    });
+});
+
+module.exports= {loginController,registerController,fetchAllUsersController,getLastSeenController,getAllUsers,updateUserImageController}

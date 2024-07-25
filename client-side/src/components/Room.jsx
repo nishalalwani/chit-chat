@@ -9,15 +9,17 @@ import axios from 'axios';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import { IconButton } from '@mui/material';
-import { myContext } from "./MainContainer";
+import CallDurationUpdater from '../components/CallDurationUpdater'
 
 const Room = () => {
   const [myStream, setMyStream] = useState(null);
   const [remoteUserId, setRemoteUserId] = useState(null);
   const [callDuration, setCallDuration] = useState('00:00');
+ 
   const [isMuted, setIsMuted] = useState(false);
   const [show, setShow] = useState(true);
   const [allUsers, setAllUsers] = useState();
+
 
 
   const localAudioRef = useRef(null);
@@ -29,9 +31,9 @@ const Room = () => {
 
   const { socket } = useSocket();
   const { peer, createOffer, createAnswer, setRemoteAns, remoteStream } = usePeer();
-  const { incomingCall, setIncomingCall, callFrom, setCallFrom,userData ,videoNavigate, setVideoNavigate,selectedChat} = ChatState();
+  const {myRoomId,setMyRoomId,incomingCall, setIncomingCall, callFrom, setCallFrom,userData ,videoNavigate, setVideoNavigate,selectedChat} = ChatState();
 
-
+console.log(videoNavigate,"videoNvaifet")
 
 const getAllUsers= async()=>{
   const config={
@@ -77,9 +79,8 @@ const getUserMediaStream = useCallback(async () => {
 }, []);
 
 const handleSendStream = useCallback(() => {
+  setShow(false)
   if (myStream) {
-    console.log("Sending stream");
-    setShow(false)
     myStream.getTracks().forEach((track) => {
       if (!addedTracks.current.has(track)) {
           peer.addTrack(track, myStream);
@@ -97,8 +98,9 @@ const handleSendStream = useCallback(() => {
   }, [myStream, peer]);
   
   const handleNewUserJoined = useCallback(async (data) => {
-    const { userId } = data;
-    // console.log('New user joined', userId);
+    const { userId,roomId } = data;
+   setMyRoomId(roomId)
+   console.log(roomId,"roooooooooooooom")
     setRemoteUserId(userId);
     try {
       const offer = await createOffer();
@@ -109,7 +111,6 @@ const handleSendStream = useCallback(() => {
   }, [createOffer, socket]);
   
   const handleIncomingCall = useCallback(async ({ from, offer }) => {
-    // console.log('Incoming call from', from);
     setRemoteUserId(from);
     try {
       const ans = await createAnswer(offer);
@@ -120,11 +121,9 @@ const handleSendStream = useCallback(() => {
   }, [createAnswer, socket]);
   
   const handleCallAccepted = useCallback(async ({ ans }) => {
-    // console.log('Call accepted, setting remote answer', ans);
     if (peer.signalingState === 'have-local-offer') {
       try {
         await setRemoteAns(ans);
-        // handleSendStream(); // Automatically send audio stream when the call is accepted
       } catch (error) {
         console.error('Error setting remote answer', error);
       }
@@ -137,7 +136,6 @@ const handleSendStream = useCallback(() => {
     if (peer.signalingState === 'stable') {
       const localOffer = await peer.createOffer();
       await peer.setLocalDescription(localOffer);
-      // console.log('Negotiation needed, sending offer:', localOffer);
       socket.emit('call-user', { userId: remoteUserId, offer: localOffer });
       
     } else {
@@ -146,10 +144,10 @@ const handleSendStream = useCallback(() => {
   }, [peer, remoteUserId, socket]);
   
   useEffect(() => {
-    // console.log('Setting up peer negotiation listener');
+
     peer.addEventListener('negotiationneeded', handleNegotiation);
     return () => {
-      // console.log('Cleaning up peer negotiation listener');
+   
       peer.removeEventListener('negotiationneeded', handleNegotiation);
     };
   }, [handleNegotiation]);
@@ -170,7 +168,20 @@ const handleSendStream = useCallback(() => {
     getUserMediaStream();
   }, [getUserMediaStream]);
   
+  useEffect(() => {
+    const handleJoinedRoom = ({ roomId }) => {
+      console.log('Joined room:', roomId);
+      setMyRoomId(roomId);
+    };
 
+    // Set up the event listener
+    socket.on('joined-room', handleJoinedRoom);
+
+    // Clean up the event listener when the component unmounts or when `socket` changes
+    return () => {
+      socket.off('joined-room', handleJoinedRoom);
+    };
+  }, [socket]); 
 
 useEffect(() => {
   if (videoNavigate) {
@@ -178,6 +189,7 @@ useEffect(() => {
       remoteVideoRef.current.srcObject = remoteStream;
     }
   } else {
+ 
     if (remoteStream && remoteAudioRef.current) {
       remoteAudioRef.current.srcObject = remoteStream;
     }
@@ -188,7 +200,6 @@ useEffect(() => {
 useEffect(() => {
   // Define the handler function
   const handleCallAccepted =  () => {
-    console.log("heyy")
     setTimeout(()=>{
       handleSendStream();
     },1000)
@@ -202,6 +213,9 @@ useEffect(() => {
     socket.off('call_accepted', handleCallAccepted);
   };
 }, [socket, handleSendStream]);
+const handleRefresh = () => {
+  window.location.reload();
+};
 
   
   const handleTimeUpdate = useCallback(() => {
@@ -237,8 +251,8 @@ useEffect(() => {
   
   const handleDeclineCall = useCallback(() => {
 
-    if (callFrom) {
-      socket.emit('call-declined', { userId: callFrom });
+ 
+      socket.emit('call-declined', {roomId:myRoomId });
       setIncomingCall(false);
       setRemoteUserId(null);
       if (myStream) {
@@ -249,9 +263,10 @@ useEffect(() => {
       }
       peer.close();
       
-    }
+
     navigate("/app/chat")
-  }, [callFrom, socket, peer, myStream]);
+    handleRefresh()
+  }, [callFrom, socket, peer, myStream,myRoomId]);
   
   useEffect(() => {
     socket.on('call-declined', (data) => {
@@ -266,8 +281,12 @@ useEffect(() => {
         setMyStream(null);
       }
       peer.close();
+      handleRefresh()
     });
+
   }, [socket, myStream, peer]);
+
+
  
   
   const user = allUsers?.find((u) => u._id === remoteUserId) ||
@@ -278,7 +297,8 @@ useEffect(() => {
 
   return (
     <>
-<button onClick={handleSendStream}>send</button>
+
+
 
       <div className="incoming-call-screen d-flex flex-column align-items-center justify-content-center">
         <div className="caller-info text-center">
@@ -287,36 +307,33 @@ useEffect(() => {
             <>
               <h2 className="caller-name my-2">{userName}</h2>
               {show && <p className="calling-text">is calling...</p>}
+
             </>
           ) : (
             <>
               {show && <p className="calling-text">calling...</p>}
               <h2 className="caller-name my-2">{userName}</h2>
+
             </>
           )}
-          {videoNavigate &&!show ? (
+ 
+          {videoNavigate ?
             <>
 
               <div className="video-container">
                 <video ref={localVideoRef} autoPlay playsInline muted className="local-video" />
-                <video ref={remoteVideoRef} autoPlay onTimeUpdate={handleTimeUpdate}  playsInline className="remote-video" />
+                <video ref={remoteVideoRef} autoPlay style={{display:show?'none':""}} playsInline className="remote-video" />
+  
               </div>
             </>
-          ) : (
-            <>
-            <audio ref={remoteAudioRef} autoPlay controls={false} onTimeUpdate={handleTimeUpdate} style={{ display: 'none' }} />
+           : 
+           ""
+          }
+           <>
+            <audio ref={remoteAudioRef} autoPlay style={{display:videoNavigate?'none':""}} controls={false}/>
+       
             </>
-          )}
-           {videoNavigate &&show ? (
-            <>
-
-              <div className="video-container">
-                <video ref={localVideoRef} autoPlay playsInline muted className="local-video" />
-              </div>
-            </>
-          ) : (
-            <audio ref={remoteAudioRef} autoPlay controls={false} onTimeUpdate={handleTimeUpdate} style={{ display: 'none' }} />
-          )}
+     
         </div>
         <div className="actions mt-4">
           {!show || (incomingCall && <button className="answer-button mx-2 bg-success text-white" onClick={handleAcceptCall}>Answer</button>)}
@@ -332,6 +349,11 @@ useEffect(() => {
         </div>
     
     </div>
+    <CallDurationUpdater
+      remoteAudioRef={remoteAudioRef}
+      remoteVideoRef={remoteVideoRef}
+      setCallDuration={setCallDuration}
+    />
     </>
   );
 };
