@@ -538,39 +538,39 @@
         margin: 11px auto;
     }
 }
-/* myStyles.css */
+
 
 .dialogTitle {
-    background-color: #f0f0f0; /* Background color */
-    color: #333; /* Text color */
-    padding: 16px; /* Padding */
+    background-color: #f0f0f0; 
+    color: #333; 
+    padding: 16px; 
   }
   
   .dialogContent {
-    padding: 16px; /* Padding */
+    padding: 16px; 
   }
   
   .dialogActions {
-    padding: 16px; /* Padding */
-    justify-content: flex-end; /* Align buttons to the right */
+    padding: 16px; 
+    justify-content: flex-end;
   }
   
   .textFieldCreateGroup {
-    margin-bottom: 16px; /* Add space below the TextField */
+    margin-bottom: 16px; 
     align-items: center;
   }
   
   .button {
-    margin-right: 8px; /* Add space between buttons */
+    margin-right: 8px; 
   }
   
   .listItem {
     border-bottom: 1px solid #ccc;
-    cursor: pointer; /* Add border between list items */
+    cursor: pointer; 
   }
   
   .listItem:last-child {
-    border-bottom: none; /* Remove border for the last list item */
+    border-bottom: none; 
   }
 
   .right-panel {
@@ -660,11 +660,7 @@
   .caller-info {
     text-align: center;
   }
-  
- 
-  
 
-  
   .video-container {
     display: flex;
     justify-content: space-around;
@@ -673,7 +669,7 @@
   
   .local-video,
   .remote-video {
-    max-width: 45%;
+    max-width: 37%;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
