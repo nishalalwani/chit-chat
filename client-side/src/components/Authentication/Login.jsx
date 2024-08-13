@@ -192,9 +192,14 @@ const Login = () => {
             </div>
             <button className='button_login' onClick={(e)=>{
                 e.preventDefault()
-                setData({...data,name:"guest",password:"Password"})
-                }}>Get Guest Credentials</button>
-            <button className='button_login' onClick={loginHandler}>Login</button>
+                setData({...data,name:"guest1",password:"guest1"})
+                }}>Get Guest1 Credentials</button>
+                 <button className='button_login' onClick={(e)=>{
+                e.preventDefault()
+                setData({...data,name:"guest2",password:"guest2"})
+                }}>Get Guest2
+                 Credentials</button>
+            <button className='button_loginn' onClick={loginHandler}>Login</button>
 
         </form>
     </div>

@@ -377,6 +377,26 @@
     .button_login:hover {
       background: #6d44b8;
     }
+    .button_loginn {
+        width: 80%;
+        height: 50px;
+        margin: 10px auto;
+        justify-content: center;
+        display: block;
+        color: #ffffff;
+        background: #00276098!important;
+        font-size: 1em;
+        font-weight: bold;
+        margin-top: 20px;
+        outline: none;
+        border: none;
+        border-radius: 5px;
+        transition: 0.2s ease-in;
+        cursor: pointer;
+      }
+      .button_loginn:hover {
+        background: #6d44b8;
+      }
     .login {
       height: 34rem;
       background: #000000;
